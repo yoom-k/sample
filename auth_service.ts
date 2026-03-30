@@ -1,13 +1,24 @@
-// auth_service.ts (Before)
+// auth_service.ts (After)
+import jwt from 'jsonwebtoken';
+
+// 環境変数からシークレットキーを取得（新規追加）
+const JWT_SECRET = process.env.JWT_SECRET;
+
 export const login = (user: User) => {
-  // セッションにユーザー情報を保存
-  session.save({
-    userId: user.id,
-    isLoggedIn: true
-  });
-  return "Session created";
+  // セッション方式からJWT方式へ変更
+  const token = jwt.sign(
+    { userId: user.id }, 
+    JWT_SECRET, 
+    { expiresIn: '1h' }
+  );
+  
+  return {
+    accessToken: token,
+    tokenType: "Bearer"
+  };
 };
 
 export const logout = () => {
-  session.destroy();
+  // クライアント側でトークンを破棄するため、サーバー処理を廃止
+  return "Please delete token on client side";
 };
